@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>โปรแกรมคำนวณเกรด | Smartmathpro</title></head><body style="margin:0;background:#f6faff">
+<!-- วิธีนำไปใช้: (1) Custom HTML block: คัดลอกตั้งแต่ <style> ถึง </script> ไปวาง (2) iframe: อัปโหลดไฟล์นี้แล้วฝังด้วย <iframe src="..." width="100%" height="1100" style="border:0"> -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap');
+#smp-grade-calc{--blue:#4DA8F7;--blue-dark:#2F7FD1;--blue-soft:#EAF4FF;--yellow:#FFD84D;--yellow-soft:#FFF6D6;--text:#1B2A4A;--danger:#E0524D;--ok:#2EB67D;font-family:'Noto Sans Thai',sans-serif;color:var(--text);max-width:960px;margin:0 auto;padding:12px;box-sizing:border-box}
+#smp-grade-calc *{box-sizing:border-box;font-family:inherit}
+.smp-card{background:#fff;border:1px solid #d9e9fb;border-radius:22px;box-shadow:0 6px 20px rgba(47,127,209,.08);padding:20px;margin-bottom:14px}
+.smp-hero h2{margin:4px 0;font-size:26px}.smp-hero p{margin:0 0 14px;color:#5d6f8f}
+.smp-tabs{display:flex;gap:4px;background:var(--blue-soft);border:1px solid #d9e9fb;border-radius:16px;padding:4px;flex-wrap:wrap}
+.smp-tab{flex:1;min-width:130px;min-height:44px;border:0;background:none;border-radius:12px;font-weight:600;color:var(--text);cursor:pointer;font-size:14px}
+.smp-tab.on{background:var(--blue);color:#fff;box-shadow:0 2px 6px rgba(47,127,209,.3)}
+.smp-pane{display:none}.smp-pane.on{display:block}
+.smp-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+.smp-f{display:flex;flex-direction:column;gap:4px;flex:1;min-width:150px}.smp-f label{font-weight:600;font-size:14px}
+.smp-in,.smp-sel{min-height:44px;border:1px solid #cfe3f8;border-radius:12px;padding:0 12px;font-size:15px;background:#fff;color:var(--text);width:100%}
+.smp-in:focus,.smp-sel:focus,.smp-btn:focus-visible,.smp-tab:focus-visible{outline:3px solid var(--yellow);outline-offset:1px}
+.smp-bad{border-color:var(--danger)!important;background:#fff5f5}.smp-msg{color:var(--danger);font-size:12px;min-height:0}
+.smp-head,.smp-row{display:grid;grid-template-columns:36px 1fr 130px 130px 36px;gap:8px;align-items:center;padding:6px 8px}
+.smp-t2 .smp-head,.smp-t2 .smp-row{grid-template-columns:36px 1fr 130px 130px}
+.smp-head{background:var(--blue-soft);border-radius:12px;font-weight:700;font-size:14px}
+.smp-row{border-bottom:1px solid #e6f0fb}
+.smp-btn{min-height:44px;border:0;border-radius:12px;padding:0 18px;font-weight:700;font-size:15px;cursor:pointer}
+.smp-main{background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blue-dark)}.smp-main:active{transform:translateY(3px);box-shadow:0 1px 0 var(--blue-dark)}
+.smp-soft{background:var(--blue-soft);color:var(--blue-dark);box-shadow:0 3px 0 #c5defa}
+.smp-red{background:var(--danger);color:#fff;box-shadow:0 3px 0 #b03a36}.smp-yel{background:var(--yellow);color:var(--text);box-shadow:0 3px 0 #e3b92a}
+.smp-x{background:none;border:0;color:var(--danger);font-size:20px;cursor:pointer;min-height:44px}
+.smp-act{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.smp-res{background:var(--yellow-soft);border:2px solid var(--yellow);border-radius:20px;padding:18px;text-align:center;margin-top:16px}
+.smp-big{font-size:56px;font-weight:700;color:var(--blue-dark);line-height:1.1}.smp-small{color:#5d6f8f;font-size:13px}
+.smp-pill{display:inline-block;padding:4px 14px;border-radius:99px;font-weight:700;font-size:14px;margin-top:6px}
+.smp-note{font-size:12px;color:#5d6f8f;margin-top:10px}.smp-opt{background:var(--blue-soft);border-radius:14px;padding:12px;margin-bottom:12px}
+.smp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.smp-ck{padding:10px 12px;border-radius:12px;margin-top:8px;font-weight:600}
+@media(max-width:640px){.smp-head{display:none}.smp-row,.smp-t2 .smp-row{grid-template-columns:28px 1fr 1fr 32px;border:1px solid #e0edfb;border-radius:14px;margin-bottom:8px}.smp-t2 .smp-row{grid-template-columns:28px 1fr 1fr}
+.smp-row>:nth-child(2){grid-column:2/5}.smp-t2 .smp-row>:nth-child(2){grid-column:2/4}.smp-grid{grid-template-columns:1fr}.smp-big{font-size:44px}}
+</style>
+<div id="smp-grade-calc">
+<div class="smp-card smp-hero"><div id="smp-logo" style="font-size:34px;line-height:1">🧮</div><h2>โปรแกรมคำนวณเกรด (SMP Grade Calculator)</h2><p>คำนวณ GPA, GPAX และตั้งเป้าหมายเกรด ใช้ได้ฟรี คำนวณในเครื่องคุณเอง</p>
+<div class="smp-tabs" role="tablist">
+<button class="smp-tab on" data-t="1">🎓 คำนวณ GPA</button><button class="smp-tab" data-t="2">📊 GPAX สะสม</button><button class="smp-tab" data-t="3">🎯 ตั้งเป้าหมาย</button><button class="smp-tab" data-t="4">🏫 เช็กเกณฑ์คณะ</button></div></div>
+
+<div class="smp-card smp-pane on" id="smp-p1">
+<div class="smp-bar"><div class="smp-f"><label for="smp-plan">แผนการเรียน</label><select class="smp-sel" id="smp-plan"><option value="">กรอกข้อมูลเอง</option><option value="sci">สายวิทย์ - คณิต</option><option value="calc">สายศิลป์ - คำนวณ</option><option value="lang">สายศิลป์ - ภาษา</option></select></div>
+<div class="smp-f" id="smp-termbox" style="display:none"><label for="smp-term">ชั้นปี / เทอม</label><select class="smp-sel" id="smp-term"></select></div></div>
+<div class="smp-bar"><div class="smp-f" style="max-width:160px"><label for="smp-n">จำนวนวิชา</label><input class="smp-in" id="smp-n" type="number" min="1" max="30" value="5"></div>
+<button class="smp-btn smp-soft" id="smp-add">＋ เพิ่มแถว</button><button class="smp-btn smp-red" id="smp-less">－ ลดแถว</button><button class="smp-btn smp-yel" id="smp-demo">✨ ลองใช้ตัวอย่าง</button></div>
+<div class="smp-head"><span>ลำดับ</span><span>ชื่อวิชา (ไม่บังคับ)</span><span>หน่วยกิต</span><span>เกรด</span><span></span></div><div id="smp-rows"></div>
+<div class="smp-opt" style="margin-top:12px"><label style="font-weight:600;cursor:pointer"><input type="checkbox" id="smp-usex"> รวมกับ GPAX เดิม (ไม่บังคับ)</label>
+<div class="smp-grid" id="smp-xbox" style="display:none;margin-top:10px"><div class="smp-f"><label for="smp-ox">GPAX ปัจจุบัน</label><input class="smp-in" id="smp-ox" type="number" step="0.01" placeholder="เช่น 2.50"></div><div class="smp-f"><label for="smp-oc">หน่วยกิตสะสมถึงปัจจุบัน</label><input class="smp-in" id="smp-oc" type="number" step="0.5" placeholder="เช่น 60"></div></div></div>
+<div class="smp-act"><button class="smp-btn smp-main" id="smp-go">คำนวณ</button><button class="smp-btn smp-soft" id="smp-clr">ล้างข้อมูล</button></div>
+<div id="smp-r1" aria-live="polite"></div></div>
+
+<div class="smp-card smp-pane" id="smp-p2"><div class="smp-t2">
+<div class="smp-bar"><div class="smp-f" style="max-width:160px"><label for="smp-n2">จำนวนเทอม</label><input class="smp-in" id="smp-n2" type="number" min="1" max="12" value="5"></div><button class="smp-btn smp-soft" id="smp-add2">＋ เพิ่มแถว</button><button class="smp-btn smp-red" id="smp-less2">－ ลดแถว</button></div>
+<div class="smp-head"><span>ลำดับ</span><span>เทอม / ปีการศึกษา</span><span>GPA (0-4)</span><span>หน่วยกิตรวม</span></div><div id="smp-rows2"></div></div>
+<div class="smp-act"><button class="smp-btn smp-main" id="smp-go2">คำนวณ GPAX</button></div><div id="smp-r2" aria-live="polite"></div></div>
+
+<div class="smp-card smp-pane" id="smp-p3"><div class="smp-grid">
+<div class="smp-f"><label for="smp-g1">GPAX ที่ต้องการ</label><input class="smp-in" id="smp-g1" type="number" step="0.01" placeholder="เช่น 3.50"></div>
+<div class="smp-f"><label for="smp-g2">GPAX ปัจจุบัน</label><input class="smp-in" id="smp-g2" type="number" step="0.01" placeholder="เช่น 3.20"></div>
+<div class="smp-f"><label for="smp-g3">หน่วยกิตสะสมถึงปัจจุบัน</label><input class="smp-in" id="smp-g3" type="number" step="0.5" placeholder="เช่น 60"></div>
+<div class="smp-f"><label for="smp-g4">หน่วยกิตรวมที่เรียนเทอมนี้</label><input class="smp-in" id="smp-g4" type="number" step="0.5" placeholder="เช่น 15.5"></div></div>
+<div class="smp-act"><button class="smp-btn smp-main" id="smp-go3">คำนวณเกรดที่ต้องการ</button></div><div id="smp-r3" aria-live="polite"></div></div>
+
+<div class="smp-card smp-pane" id="smp-p4"><div class="smp-f"><label for="smp-fac">เลือกคณะ / หลักสูตร</label><select class="smp-sel" id="smp-fac"></select></div>
+<div id="smp-fbox" style="margin-top:12px" aria-live="polite"></div>
+<p class="smp-note">⚠️ ข้อมูลเป็นตัวอย่างประกอบการประเมิน เกณฑ์เปลี่ยนได้ทุกปี โปรดตรวจประกาศ myTCAS ปี 69 ของแต่ละมหาวิทยาลัยอีกครั้ง</p></div>
+</div>
+<script>
+(function(){
+var R=document.getElementById('smp-grade-calc'),$=function(s){return R.querySelector(s)},$$=function(s){return Array.prototype.slice.call(R.querySelectorAll(s))};
+/* ===== ข้อมูล (แก้ไขได้ที่นี่) ===== */
+var GRADES=[['4','4 (A)'],['3.5','3.5 (B+)'],['3','3 (B)'],['2.5','2.5 (C+)'],['2','2 (C)'],['1.5','1.5 (D+)'],['1','1 (D)'],['0','0 (F)']];
+var CREDITS=[0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6];
+var TERMS=[['4/1','ม.4 เทอม 1'],['4/2','ม.4 เทอม 2'],['5/1','ม.5 เทอม 1'],['5/2','ม.5 เทอม 2'],['6/1','ม.6 เทอม 1'],['6/2','ม.6 เทอม 2']];
+/* ข้อมูลหลักสูตรสายวิทย์-คณิตอ้างอิงแผนการเรียนที่แนบ */
+function base(t){var n=t,a=[['ภาษาไทย '+n,1],['วิทยาศาสตร์พื้นฐาน '+n,1],['คณิตศาสตร์พื้นฐาน '+n,1],['สุขศึกษา '+n,.5],['สังคมศึกษา '+n,1]];if(t<5)a.push(['ประวัติศาสตร์ '+n,.5]);return a.concat([['ศิลปะ '+n,.5],['การงานอาชีพและเทคโนโลยี '+n,.5],['ภาษาอังกฤษพื้นฐาน '+n,1]])}
+var SCI_EXTRA={1:[['คณิตศาสตร์เพิ่มเติม 1',1.5],['การเขียนเรื่องสั้น',.5],['ฟิสิกส์ 1',1.5],['เคมี 1',1.5],['ชีววิทยา 1',1.5],['ภาษาจีน 1',1],['ภาษาอังกฤษฟัง-พูด 1',1]],2:[['คณิตศาสตร์เพิ่มเติม 2',1.5],['การเขียนสารคดี',.5],['ฟิสิกส์ 2',1.5],['เคมี 2',1.5],['ชีววิทยา 2',1.5],['ภาษาจีน 2',1],['ภาษาอังกฤษฟัง-พูด 2',1]],3:[['คณิตศาสตร์เพิ่มเติม 3',1.5],['ฟิสิกส์ 3',1.5],['เคมี 3',1.5],['ชีววิทยา 3',1.5],['IS1 การศึกษาค้นคว้าฯ',1],['ภาษาและวัฒนธรรม 1',1],['ภาษาจีน 1',1]],4:[['คณิตศาสตร์เพิ่มเติม 4',1.5],['ฟิสิกส์ 4',1.5],['เคมี 4',1.5],['ชีววิทยา 4',1.5],['IS2 การสื่อสารและการนำเสนอ',1],['ภาษาและวัฒนธรรม 2',1],['ภาษาจีน 2',1]],5:[['คณิตศาสตร์เพิ่มเติม 5',1.5],['ฟิสิกส์ 5',1.5],['เคมี 5',1.5],['ชีววิทยา 5',1.5],['ภาษาเพื่ออาชีพ 1',1],['ภาษาจีน 1',1]],6:[['ศิลปะ 2',1],['ฟิสิกส์ 6',1.5],['เคมี 6',1.5],['ชีววิทยา 6',1.5],['ภาษาเพื่ออาชีพ 2',1],['ภาษาจีน 2',1]]};
+/* TODO: แทนที่ด้วยข้อมูลจริงของโรงเรียน (ศิลป์-คำนวณ / ศิลป์-ภาษา ใช้วิชาที่นิยมเรียน) */
+var ART={calc:[['คณิตศาสตร์เพิ่มเติม',1.5],['ภาษาอังกฤษเพิ่มเติม',1],['สังคมศึกษาเพิ่มเติม',1],['ภาษาจีน',1],['คอมพิวเตอร์',1]],lang:[['ภาษาอังกฤษเพิ่มเติม',1.5],['ภาษาจีน',1.5],['ภาษาญี่ปุ่น',1.5],['สังคมศึกษาเพิ่มเติม',1],['ภาษาไทยเพิ่มเติม',1]]};
+function subjects(plan,term){var t=+term.split('/')[1]+(term[0]-4)*2;if(plan=='sci')return base(t).concat(SCI_EXTRA[t]);return base(t).concat(ART[plan])}
+var FAC=[
+{n:'คณะเภสัชศาสตร์ ม.เชียงใหม่ (ม.4-6 / 5 เทอม)',p:'วิทย์-คณิต',c:[['GPAX รวม',3.5],['กลุ่มสาระคณิตศาสตร์',3.5],['กลุ่มสาระวิทยาศาสตร์และเทคโนโลยี',3.5],['กลุ่มสาระภาษาต่างประเทศ',3.5]]},
+{n:'คณะแพทยศาสตร์ศิริราช ม.มหิดล – Academic Excellence (รอบ 1)',p:'วิทย์-คณิต',c:[['GPAX',3.5]]},
+{n:'หลักสูตร 0401dt ม.มหิดล รอบ 1/1 (4 เทอม)',p:'วิทย์-คณิต',c:[['GPAX',3.5],['วิทยาศาสตร์',3.5],['คณิตศาสตร์',3.5],['ภาษาอังกฤษ',3.5],['ภาษาไทย',3],['สังคมศึกษา ศาสนา วัฒนธรรม',3]]},
+{n:'วิศวกรรมคอมพิวเตอร์ ม.มหิดล รอบ 1/1 (4 เทอม)',p:'วิทย์-คณิต',c:[['GPAX',3],['GPA ฟิสิกส์',3],['GPA คณิต',3],['GPA อังกฤษ',3]]},
+{n:'วิศวกรรมไฟฟ้า ม.มหิดล รอบ 2 (5 เทอม)',p:'วิทย์-คณิต',c:[['GPAX',2.75],['GPA ฟิสิกส์',2.75],['GPA คณิต',2.75],['GPA อังกฤษ',2.75]]}];
+/* ===== ฟังก์ชันคำนวณ ===== */
+function r2(x){return (Math.round((x+1e-9)*100)/100).toFixed(2)}
+function gpa(rows){var s=0,c=0;rows.forEach(function(r){if(isFinite(r.g)&&isFinite(r.c)&&r.c>0){s+=r.g*r.c;c+=r.c}});return c>0?{gpa:s/c,cr:c}:null}
+function gpax(oldX,oldC,g,c){return (oldX*oldC+g*c)/(oldC+c)}
+function need(t,x,oc,c){return (t*(oc+c)-x*oc)/c}
+/* ===== UI ===== */
+function opts(a,ph){return '<option value="">'+ph+'</option>'+a.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>'}).join('')}
+var allNames=[];(function(){var s={};['sci'].forEach(function(p){TERMS.forEach(function(t){subjects(p,t[0]).forEach(function(x){s[x[0]]=1})})});['calc','lang'].forEach(function(p){subjects(p,'4/1').forEach(function(x){s[x[0]]=1})});allNames=Object.keys(s)})();
+var dl=document.createElement('datalist');dl.id='smp-names';dl.innerHTML=allNames.map(function(n){return '<option value="'+n+'">'}).join('');R.appendChild(dl);
+function row1(name,cr){var d=document.createElement('div');d.className='smp-row';var cs=CREDITS.map(function(c){return '<option value="'+c+'">'+c.toFixed(1)+'</option>'}).join('');
+d.innerHTML='<span class="smp-no"></span><input class="smp-in nm" list="smp-names" placeholder="ชื่อวิชา ไม่บังคับกรอก" aria-label="ชื่อวิชา"><span><select class="smp-sel cr" aria-label="หน่วยกิต"><option value="">เลือกหน่วยกิต</option>'+cs+'<option value="o">อื่น ๆ (กรอกเอง)</option></select><input class="smp-in co" type="number" step="0.5" min="0" placeholder="หน่วยกิต" style="display:none"></span><select class="smp-sel gr" aria-label="เกรด">'+opts(GRADES,'เลือกเกรด')+'</select><button class="smp-x" title="ลบแถว" aria-label="ลบแถว">✕</button>';
+d.querySelector('.nm').value=name||'';var s=d.querySelector('.cr'),o=d.querySelector('.co');if(cr!=null)s.value=cr;
+s.onchange=function(){if(s.value=='o'){s.style.display='none';o.style.display='';o.focus()}};
+d.querySelector('.smp-x').onclick=function(){d.remove();num()};return d}
+function num(){$$('#smp-rows .smp-no').forEach(function(e,i){e.textContent=i+1});$('#smp-n').value=$$('#smp-rows .smp-row').length}
+function setRows(n,list){var b=$('#smp-rows');b.innerHTML='';for(var i=0;i<n;i++){var x=list&&list[i];b.appendChild(row1(x&&x[0],x&&x[1]))}num()}
+function resize(n){var b=$('#smp-rows'),k=b.children.length;n=Math.max(1,Math.min(30,n|0));while(k<n){b.appendChild(row1());k++}while(k>n){b.lastChild.remove();k--}num()}
+function mark(e,bad,t){e.classList.toggle('smp-bad',!!bad);var m=e.parentNode.querySelector('.smp-msg');if(m)m.remove();if(bad){var p=document.createElement('div');p.className='smp-msg';p.textContent=t;e.parentNode.appendChild(p)}}
+function tone(g){return g>=3.5?['เก่งมาก! 🎉','#2EB67D','#e3f7ee']:g>=3?['ดีมาก สู้ต่อไป 💪','#2F7FD1','#EAF4FF']:g>=2?['ผ่านฉลุย ยังพัฒนาได้อีก 📈','#b7791f','#FFF6D6']:['ยังมีเวลาปรับ ลองตั้งเป้าหมายดู 🎯','#E0524D','#fdeaea']}
+function show(el,html,val,dec){el.innerHTML=html;var b=el.querySelector('.smp-big');if(b&&val!=null){var t0=null;(function f(ts){t0=t0||ts;var p=Math.min(1,(ts-t0)/600);b.textContent=r2(val*p);if(p<1)requestAnimationFrame(f)})(performance.now())}el.scrollIntoView({behavior:'smooth',block:'center'})}
+function warn(el,t){el.innerHTML='<div class="smp-res" style="background:#fff5f5;border-color:#E0524D">'+t+'</div>'}
+function numv(id){var e=$(id),v=e.value.trim();return v===''?NaN:parseFloat(v)}
+/* แท็บ */
+$$('.smp-tab').forEach(function(b){b.onclick=function(){$$('.smp-tab').forEach(function(x){x.classList.toggle('on',x==b)});$$('.smp-pane').forEach(function(p){p.classList.toggle('on',p.id=='smp-p'+b.dataset.t)})}});
+/* แท็บ 1 */
+$('#smp-term').innerHTML=TERMS.map(function(t){return '<option value="'+t[0]+'">'+t[1]+'</option>'}).join('');
+function loadPlan(){var p=$('#smp-plan').value;$('#smp-termbox').style.display=p?'':'none';if(!p){setRows(5);return}var l=subjects(p,$('#smp-term').value);setRows(l.length,l)}
+$('#smp-plan').onchange=loadPlan;$('#smp-term').onchange=loadPlan;
+$('#smp-n').onchange=function(){resize(+this.value)};$('#smp-add').onclick=function(){resize($$('#smp-rows .smp-row').length+1)};$('#smp-less').onclick=function(){resize($$('#smp-rows .smp-row').length-1)};
+$('#smp-usex').onchange=function(){$('#smp-xbox').style.display=this.checked?'':'none'};
+$('#smp-demo').onclick=function(){$('#smp-plan').value='';$('#smp-termbox').style.display='none';setRows(3,[['คณิตศาสตร์',2],['ภาษาไทย',1],['สังคมศึกษา',1.5]]);var g=['3','3.5','4'];$$('#smp-rows .gr').forEach(function(s,i){s.value=g[i]});$('#smp-go').click()};
+$('#smp-clr').onclick=function(){$('#smp-plan').value='';loadPlan();$('#smp-r1').innerHTML='';$('#smp-ox').value='';$('#smp-oc').value=''};
+$('#smp-go').onclick=function(){var rows=[],bad=false;$$('#smp-rows .smp-row').forEach(function(d){var cs=d.querySelector('.cr'),co=d.querySelector('.co'),c=cs.value=='o'?parseFloat(co.value):parseFloat(cs.value),g=parseFloat(d.querySelector('.gr').value);if(cs.value=='o'){var e=!(c>=0&&c<=10);mark(co,e,'กรอก 0-10');bad=bad||e}rows.push({g:g,c:c})});
+var res=gpa(rows),el=$('#smp-r1');if(bad)return;if(!res)return warn(el,'กรอกหน่วยกิต (มากกว่า 0) และเกรดอย่างน้อย 1 วิชาก่อนนะ 😊');
+var t=tone(res.gpa),h='<div class="smp-res"><div class="smp-small">เกรดเฉลี่ยเทอมนี้ (GPA)</div><div class="smp-big">'+r2(res.gpa)+'</div><div class="smp-small">หน่วยกิตรวม '+res.cr+'</div><span class="smp-pill" style="background:'+t[2]+';color:'+t[1]+'">'+t[0]+'</span>';
+if($('#smp-usex').checked){var ox=numv('#smp-ox'),oc=numv('#smp-oc');var b1=!(ox>=0&&ox<=4),b2=!(oc>=0);mark($('#smp-ox'),b1,'GPAX ต้อง 0-4');mark($('#smp-oc'),b2,'กรอกหน่วยกิตสะสม');if(b1||b2)return;h+='<hr style="border:0;border-top:1px dashed #e3b92a;margin:14px 0"><div class="smp-small">GPAX ใหม่หลังรวมเทอมนี้</div><div style="font-size:34px;font-weight:700;color:#2F7FD1">'+r2(gpax(ox,oc,res.gpa,res.cr))+'</div><div class="smp-small">หน่วยกิตสะสม '+(oc+res.cr)+'</div>'}
+show(el,h+'</div>',res.gpa)};
+/* แท็บ 2 */
+function row2(){var d=document.createElement('div');d.className='smp-row';d.innerHTML='<span class="smp-no"></span><input class="smp-in" placeholder="ชื่อเทอมหรือปี ไม่บังคับ" aria-label="เทอม"><input class="smp-in gv" type="number" step="0.01" placeholder="0.00 - 4.00" aria-label="GPA"><input class="smp-in cv" type="number" step="0.5" placeholder="หน่วยกิตรวม" aria-label="หน่วยกิตรวม">';
+d.querySelector('.gv').oninput=function(){mark(this,this.value!==''&&!(+this.value>=0&&+this.value<=4),'ต้องอยู่ระหว่าง 0-4')};return d}
+function size2(n){var b=$('#smp-rows2');n=Math.max(1,Math.min(12,n|0));while(b.children.length<n)b.appendChild(row2());while(b.children.length>n)b.lastChild.remove();$$('#smp-rows2 .smp-no').forEach(function(e,i){e.textContent=i+1});$('#smp-n2').value=n}
+size2(5);$('#smp-n2').onchange=function(){size2(+this.value)};$('#smp-add2').onclick=function(){size2($('#smp-rows2').children.length+1)};$('#smp-less2').onclick=function(){size2($('#smp-rows2').children.length-1)};
+$('#smp-go2').onclick=function(){var rows=[],bad=false;$$('#smp-rows2 .smp-row').forEach(function(d){var g=parseFloat(d.querySelector('.gv').value),c=parseFloat(d.querySelector('.cv').value);if(d.querySelector('.gv').value!==''&&!(g>=0&&g<=4))bad=true;rows.push({g:g,c:c})});if(bad)return;
+var res=gpa(rows),el=$('#smp-r2');if(!res)return warn(el,'กรอก GPA และหน่วยกิตรวมอย่างน้อย 1 เทอมก่อนนะ 😊');var t=tone(res.gpa);
+show(el,'<div class="smp-res"><div class="smp-small">เกรดเฉลี่ยสะสม (GPAX)</div><div class="smp-big">'+r2(res.gpa)+'</div><div class="smp-small">หน่วยกิตสะสม '+res.cr+'</div><span class="smp-pill" style="background:'+t[2]+';color:'+t[1]+'">'+t[0]+'</span></div>',res.gpa)};
+/* แท็บ 3 */
+$('#smp-go3').onclick=function(){var t=numv('#smp-g1'),x=numv('#smp-g2'),oc=numv('#smp-g3'),c=numv('#smp-g4'),el=$('#smp-r3');
+var e=[!(t>=0&&t<=4),!(x>=0&&x<=4),!(oc>=0),!(c>0)],m=['0-4','0-4','กรอกหน่วยกิตสะสม (0 ถ้าเพิ่งเริ่ม)','ต้องมากกว่า 0'];['#smp-g1','#smp-g2','#smp-g3','#smp-g4'].forEach(function(id,i){mark($(id),e[i],m[i])});if(e.some(Boolean))return;
+var n=need(t,x,oc,c);if(n>4)return show(el,'<div class="smp-res" style="background:#fff5f5;border-color:#E0524D"><div class="smp-big" style="color:#E0524D">'+r2(n)+'</div><b>เป้าหมายนี้ทำไม่ได้ในเทอมนี้</b><div class="smp-small">ต้องได้เกิน 4.00 ลองเพิ่มจำนวนเทอมหรือลดเป้าหมายลงนะ</div></div>');
+if(n<=0)return show(el,'<div class="smp-res"><div style="font-size:40px">🎉</div><b>บรรลุเป้าหมายแล้ว!</b><div class="smp-small">เทอมนี้ได้เกรดเท่าไรก็ถึงเป้า</div></div>');
+var lv=n<=2.5?['ง่าย','#2EB67D','#e3f7ee']:n<=3.3?['ท้าทาย','#2F7FD1','#EAF4FF']:['ยากมาก','#b7791f','#FFF6D6'];
+show(el,'<div class="smp-res"><div class="smp-small">เทอมนี้ต้องได้ GPA อย่างน้อย</div><div class="smp-big">'+r2(n)+'</div><span class="smp-pill" style="background:'+lv[2]+';color:'+lv[1]+'">ระดับ: '+lv[0]+'</span></div>',n)};
+/* แท็บ 4 */
+$('#smp-fac').innerHTML=FAC.map(function(f,i){return '<option value="'+i+'">'+f.n+'</option>'}).join('');
+function drawFac(){var f=FAC[$('#smp-fac').value];$('#smp-fbox').innerHTML='<div class="smp-res" style="text-align:left;margin-top:0"><div style="font-weight:700;font-size:17px;margin-bottom:4px">'+f.n+'</div><div class="smp-small" style="margin-bottom:10px">รับแผนการเรียน: '+f.p+'</div>'+f.c.map(function(c){return '<div class="smp-ck" style="background:#fff;display:flex;justify-content:space-between;gap:10px"><span>'+c[0]+'</span><span style="color:#2F7FD1;white-space:nowrap">ไม่น้อยกว่า '+c[1].toFixed(2)+'</span></div>'}).join('')+'</div>'}
+$('#smp-fac').onchange=drawFac;drawFac();
+/* ใส่ลิงก์รูปโลโก้ Smartmathpro (หรือ data:image/...) ที่นี่ ถ้าเว้นว่างจะแสดงไอคอนเครื่องคิดเลขแทน */
+var LOGO='';if(LOGO){$('#smp-logo').innerHTML='<img src="'+LOGO+'" alt="Smartmathpro" style="height:56px;width:auto">'}
+R.addEventListener('keydown',function(e){if(e.key=='Enter'&&e.target.tagName=='INPUT'&&e.target.type=='number'){var p=e.target.closest('.smp-pane');if(p)p.querySelector('.smp-main').click()}});
+setRows(5);
+})();
+</script></body></html>
